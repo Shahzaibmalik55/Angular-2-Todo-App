@@ -20,10 +20,11 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
             }],
         execute: function() {
             newTask = (function () {
-                function newTask(task, desp, status) {
+                function newTask(task, desp, status, show) {
                     this.task = task;
                     this.desp = desp;
                     this.status = status;
+                    this.show = show;
                 }
                 newTask.prototype.delete = function () {
                     this.status = false;
@@ -33,8 +34,11 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
             taskTable = (function () {
                 function taskTable() {
                 }
+                taskTable.prototype.inactive = function () {
+                    this.tasks.status = this.tasks.status ? false : true;
+                };
                 taskTable.prototype.delete = function () {
-                    this.tasks.delete();
+                    this.tasks.show = false;
                 };
                 taskTable = __decorate([
                     core_1.Component({
@@ -43,7 +47,7 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
                             class: 'td'
                         },
                         inputs: ['tasks'],
-                        template: "\n\t<td> {{ tasks.task }} </td>\n\t<td> {{ tasks.desp }} </td>\n\t<td><button class=\"ui green button\">Active</button> </td>\n\t<td><button class=\"ui red button\" (click)=\"delete()\">Remove</button> </td>\t\n\t\n\t"
+                        template: "\n\t<td> {{ tasks.task }} </td>\n\t<td> {{ tasks.desp }} </td>\n\t<td><button class=\"ui green button\" *ngIf=\"tasks.status\" (click)=\"inactive()\">Activated</button> <button class=\"ui red button\" *ngIf=\"!tasks.status\"  (click)=\"inactive()\">Unactivated</button></td>\n\t<td><button class=\"ui red button\" (click)=\"delete()\">Remove</button> </td>\t\n\t\n\t"
                     }), 
                     __metadata('design:paramtypes', [])
                 ], taskTable);
@@ -55,7 +59,7 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
                 }
                 todoApp.prototype.addTodo = function (task, desp) {
                     console.log("task: " + task.value + " description : " + desp.value);
-                    var obj = new newTask(task.value, desp.value, true);
+                    var obj = new newTask(task.value, desp.value, true, true);
                     console.log(obj);
                     this.tasks.push(obj);
                     task.value = "";
