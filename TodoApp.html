@@ -23,7 +23,7 @@
 		<th> Remove Task </th>
 	</thead>
 	<tbody>
-		<tr *ngFor="#a of tasks; #num = index" [tasks]="a" *ngIf="tasks.show">
+		<tr *ngFor="#a of tasks; #num = index" [tasks]="a" (deleteEvent)="delete($event)" *ngIf="tasks.show">
 		</tr>
 	</tbody>
 </table>

@@ -20,11 +20,12 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
             }],
         execute: function() {
             newTask = (function () {
-                function newTask(task, desp, status, show) {
+                function newTask(task, desp, status, show, id) {
                     this.task = task;
                     this.desp = desp;
                     this.status = status;
-                    this.show = show;
+                    this.show = show,
+                        this.id = Date.now();
                 }
                 newTask.prototype.delete = function () {
                     this.status = false;
@@ -33,12 +34,13 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
             })();
             taskTable = (function () {
                 function taskTable() {
+                    this.deleteEvent = new core_1.EventEmitter();
                 }
                 taskTable.prototype.inactive = function () {
                     this.tasks.status = this.tasks.status ? false : true;
                 };
                 taskTable.prototype.delete = function () {
-                    this.tasks.show = false;
+                    this.deleteEvent.emit(this.tasks);
                 };
                 taskTable = __decorate([
                     core_1.Component({
@@ -47,7 +49,8 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
                             class: 'td'
                         },
                         inputs: ['tasks'],
-                        template: "\n\t<td> {{ tasks.task }} </td>\n\t<td> {{ tasks.desp }} </td>\n\t<td><button class=\"ui green button\" *ngIf=\"tasks.status\" (click)=\"inactive()\">Activated</button> <button class=\"ui red button\" *ngIf=\"!tasks.status\"  (click)=\"inactive()\">Unactivated</button></td>\n\t<td><button class=\"ui red button\" (click)=\"delete()\">Remove</button> </td>\t\n\t\n\t"
+                        outputs: ['deleteEvent'],
+                        template: "\n\t<td> {{ tasks.task }} </td>\n\t<td> {{ tasks.desp }} </td>\n\t<td><button class=\"ui green button\" *ngIf=\"tasks.status\" (click)=\"inactive()\">Activated</button> <button class=\"ui red button\" *ngIf=\"!tasks.status\"  (click)=\"inactive()\">Unactivated</button></td>\n\t<td><button class=\"ui red button\" (click)=\"delete()\">Remove</button> </td>\t\n\t\n\t\n\t"
                     }), 
                     __metadata('design:paramtypes', [])
                 ], taskTable);
@@ -64,6 +67,12 @@ System.register(["angular2/platform/browser", "angular2/core"], function(exports
                     this.tasks.push(obj);
                     task.value = "";
                     desp.value = "";
+                };
+                todoApp.prototype.delete = function (task) {
+                    for (var i = 0; i < this.tasks.length; i++) {
+                        if (this.tasks[i].id == task.id)
+                            this.tasks.splice(i, 1);
+                    }
                 };
                 todoApp = __decorate([
                     core_1.Component({
